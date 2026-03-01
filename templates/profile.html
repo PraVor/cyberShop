@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Профіль</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Syne+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f; --surface: #111118; --border: #2a2a3a;
+      --accent: #e8ff47; --accent2: #7c4dff; --text: #f0f0f0; --muted: #666680;
+    }
+    body {
+      min-height: 100vh; background: var(--bg);
+      font-family: 'Syne', sans-serif; color: var(--text); overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px),
+        linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px; opacity: 0.4; pointer-events: none; z-index: 0;
+    }
+
+    /* ── HEADER ── */
+    header {
+      position: relative; z-index: 10; display: flex; align-items: center;
+      justify-content: space-between; padding: 24px 48px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,15,0.85); backdrop-filter: blur(12px);
+    }
+    .logo { display: flex; align-items: baseline; gap: 6px; }
+    .logo-text { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; }
+    .logo-text span { color: var(--accent); }
+    .logo-tag { font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+    nav { display: flex; align-items: center; gap: 32px; }
+    nav a { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    nav a:hover { color: var(--accent); }
+    nav a.active { color: var(--text); }
+
+    /* ── MAIN ── */
+    main {
+      position: relative; z-index: 1;
+      max-width: 900px; margin: 0 auto; padding: 56px 32px 80px;
+    }
+
+    /* ── USER CARD ── */
+    .user-card {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 2px; padding: 40px 40px 36px;
+      position: relative; margin-bottom: 32px;
+      animation: fadeUp 0.5s 0.05s ease both;
+      box-shadow: 0 0 60px rgba(124,77,255,0.06);
+    }
+    .user-card::before {
+      content: ''; position: absolute; top: -1px; left: -1px;
+      width: 60px; height: 60px;
+      border-top: 2px solid var(--accent); border-left: 2px solid var(--accent);
+    }
+    .user-card::after {
+      content: ''; position: absolute; bottom: -1px; right: -1px;
+      width: 60px; height: 60px;
+      border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent);
+    }
+
+    .user-tag {
+      font-family: 'Syne Mono', monospace; font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase;
+      color: var(--accent); margin-bottom: 20px; display: block;
+    }
+
+    .user-name {
+      font-size: 40px; font-weight: 800; letter-spacing: -0.03em; line-height: 1;
+      margin-bottom: 20px;
+    }
+    .user-name span { color: var(--accent); }
+
+    .user-fields { display: flex; flex-direction: column; gap: 12px; }
+
+    .user-field {
+      display: flex; align-items: center; gap: 16px;
+      padding: 12px 16px; border: 1px solid var(--border);
+      border-radius: 2px; background: rgba(255,255,255,0.02);
+    }
+    .field-label {
+      font-family: 'Syne Mono', monospace; font-size: 10px;
+      letter-spacing: 0.18em; text-transform: uppercase;
+      color: var(--accent2); min-width: 72px;
+    }
+    .field-value { font-size: 14px; color: var(--text); font-weight: 600; }
+
+    /* ── ITEMS SECTION ── */
+    .section-header {
+      display: flex; align-items: baseline; gap: 12px;
+      margin-bottom: 20px;
+      animation: fadeUp 0.5s 0.15s ease both;
+    }
+    .section-tag {
+      font-family: 'Syne Mono', monospace; font-size: 11px;
+      letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent);
+    }
+    .section-count {
+      font-family: 'Syne Mono', monospace; font-size: 11px;
+      color: var(--muted);
+    }
+
+    .items-grid {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px;
+    }
+    @media (max-width: 700px) { .items-grid { grid-template-columns: repeat(2, 1fr); } }
+    @media (max-width: 460px) { .items-grid { grid-template-columns: 1fr; } }
+
+    .item-chip {
+      background: var(--surface); border: 1px solid var(--border);
+      border-radius: 2px; padding: 14px 16px;
+      display: flex; align-items: center; gap: 10px;
+      animation: fadeUp 0.4s ease both;
+      transition: border-color 0.2s, box-shadow 0.2s;
+    }
+    .item-chip:hover {
+      border-color: var(--accent2);
+      box-shadow: 0 4px 16px rgba(124,77,255,0.15);
+    }
+    .chip-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--accent); flex-shrink: 0;
+    }
+    .chip-name {
+      font-size: 13px; font-weight: 600; color: var(--text);
+      white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
+    }
+
+    /* empty state */
+    .empty {
+      grid-column: 1 / -1; padding: 40px 24px; text-align: center;
+      border: 1px dashed var(--border); border-radius: 2px;
+      animation: fadeUp 0.5s 0.2s ease both;
+    }
+    .empty-icon { font-size: 28px; margin-bottom: 10px; opacity: 0.4; }
+    .empty-text { font-family: 'Syne Mono', monospace; font-size: 12px; letter-spacing: 0.1em; color: var(--muted); }
+    .empty a { color: var(--accent); text-decoration: none; border-bottom: 1px solid transparent; transition: border-color 0.2s; }
+    .empty a:hover { border-color: var(--accent); }
+
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(16px); } to { opacity: 1; transform: translateY(0); } }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span class="logo-text">Cyber<span>Shop</span></span>
+      <span class="logo-tag">// store</span>
+    </div>
+    <nav>
+      <a href="/shop">Магазин</a>
+      <a href="/profile" class="active">Профіль</a>
+      <a href="/login">Вихід</a>
+    </nav>
+  </header>
+
+  <main>
+    <!-- User info -->
+    <div class="user-card">
+      <span class="user-tag">// user_profile</span>
+      <div class="user-name">{{ username }}<span>.</span></div>
+      <div class="user-fields">
+        <div class="user-field">
+          <span class="field-label">username</span>
+          <span class="field-value">{{ username }}</span>
+        </div>
+        <div class="user-field">
+          <span class="field-label">email</span>
+          <span class="field-value">{{ email }}</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- Items -->
+    <div class="section-header">
+      <span class="section-tag">// cart_items</span>
+      <span class="section-count">{{ items | length }} позицій</span>
+    </div>
+
+    <div class="items-grid">
+      {% if items %}
+        {% for item in items %}
+        <div class="item-chip" style="animation-delay: {{ loop.index0 * 0.06 }}s">
+          <div class="chip-dot"></div>
+          <span class="chip-name">{{ item }}</span>
+        </div>
+        {% endfor %}
+      {% else %}
+        <div class="empty">
+          <div class="empty-icon">◻</div>
+          <div class="empty-text">кошик порожній · <a href="/shop">перейти до магазину</a></div>
+        </div>
+      {% endif %}
+    </div>
+  </main>
+</body>
+</html>

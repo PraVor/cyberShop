@@ -1,0 +1,222 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>CyberShop</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Syne+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f; --surface: #111118; --border: #2a2a3a;
+      --accent: #e8ff47; --accent2: #7c4dff; --text: #f0f0f0; --muted: #666680;
+    }
+    body {
+      min-height: 100vh; background: var(--bg); font-family: 'Syne', sans-serif;
+      color: var(--text); overflow-x: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px; opacity: 0.4; pointer-events: none; z-index: 0;
+    }
+    header {
+      position: relative; z-index: 10; display: flex; align-items: center;
+      justify-content: space-between; padding: 24px 48px;
+      border-bottom: 1px solid var(--border);
+      background: rgba(10,10,15,0.85); backdrop-filter: blur(12px);
+    }
+    .logo { display: flex; align-items: baseline; gap: 6px; }
+    .logo-text { font-size: 22px; font-weight: 800; letter-spacing: -0.03em; }
+    .logo-text span { color: var(--accent); }
+    .logo-tag { font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.2em; color: var(--muted); text-transform: uppercase; }
+    nav { display: flex; align-items: center; gap: 32px; }
+    nav a { font-size: 12px; font-weight: 600; letter-spacing: 0.12em; text-transform: uppercase; color: var(--muted); text-decoration: none; transition: color 0.2s; }
+    nav a:hover { color: var(--accent); }
+    nav a.active { color: var(--text); }
+    main { position: relative; z-index: 1; max-width: 1200px; margin: 0 auto; padding: 48px 32px 80px; }
+    .page-header { margin-bottom: 48px; animation: fadeUp 0.5s ease both; }
+    .page-tag { font-family: 'Syne Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block; }
+    .page-title { font-size: 48px; font-weight: 800; letter-spacing: -0.03em; line-height: 1; }
+    .page-title span { color: var(--accent); }
+    .page-subtitle { margin-top: 12px; font-size: 14px; color: var(--muted); }
+    .grid { display: grid; grid-template-columns: repeat(5, 1fr); gap: 16px; }
+    @media (max-width: 1100px) { .grid { grid-template-columns: repeat(4, 1fr); } }
+    @media (max-width: 800px)  { .grid { grid-template-columns: repeat(3, 1fr); } }
+    @media (max-width: 560px)  { .grid { grid-template-columns: repeat(2, 1fr); } }
+    .item-card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 2px;
+      overflow: hidden; cursor: pointer; position: relative;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      animation: fadeUp 0.5s ease both;
+    }
+    .item-card:hover { transform: translateY(-4px); border-color: var(--accent2); box-shadow: 0 12px 32px rgba(124,77,255,0.2); }
+    .item-card::before {
+      content: ''; position: absolute; top: -1px; left: -1px;
+      width: 0; height: 0;
+      border-top: 2px solid var(--accent); border-left: 2px solid var(--accent);
+      transition: width 0.25s, height 0.25s; z-index: 2;
+    }
+    .item-card:hover::before { width: 28px; height: 28px; }
+    .item-img-wrap { width: 100%; aspect-ratio: 1/1; overflow: hidden; background: rgba(255,255,255,0.03); position: relative; }
+    .item-img-wrap img { width: 100%; height: 100%; object-fit: cover; display: block; transition: transform 0.4s ease; filter: brightness(0.9); }
+    .item-card:hover .item-img-wrap img { transform: scale(1.08); filter: brightness(1); }
+    .item-img-wrap::after {
+      content: ''; position: absolute; inset: 0;
+      background: linear-gradient(90deg, transparent 0%, rgba(255,255,255,0.04) 50%, transparent 100%);
+      background-size: 200% 100%; animation: shimmer 1.5s infinite; opacity: 1; transition: opacity 0.3s; pointer-events: none;
+    }
+    .item-img-wrap.loaded::after { opacity: 0; }
+    @keyframes shimmer { from { background-position: -200% 0; } to { background-position: 200% 0; } }
+    .item-info { padding: 12px 14px; border-top: 1px solid var(--border); }
+    .item-index { font-family: 'Syne Mono', monospace; font-size: 9px; letter-spacing: 0.2em; color: var(--accent2); margin-bottom: 4px; display: block; }
+    .item-name { font-size: 13px; font-weight: 600; color: var(--text); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .item-bottom { display: flex; align-items: center; justify-content: space-between; margin-top: 8px; }
+    .item-price { font-family: 'Syne Mono', monospace; font-size: 12px; color: var(--accent); }
+    .btn-cart {
+      font-family: 'Syne Mono', monospace; font-size: 10px; letter-spacing: 0.08em;
+      text-transform: uppercase; color: #0a0a0f; background: var(--accent);
+      border: none; border-radius: 2px; padding: 5px 9px; cursor: pointer;
+      transition: transform 0.15s, box-shadow 0.15s, background 0.2s, color 0.2s;
+      white-space: nowrap; flex-shrink: 0;
+    }
+    .btn-cart:hover:not(:disabled) { transform: translateY(-1px); box-shadow: 0 4px 12px rgba(232,255,71,0.35); }
+    .btn-cart:active { transform: translateY(0); }
+    .btn-cart.added { background: var(--accent2); color: #fff; cursor: default; }
+    .btn-cart:disabled { opacity: 1; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .item-card:nth-child(1)  { animation-delay: 0.05s; }
+    .item-card:nth-child(2)  { animation-delay: 0.10s; }
+    .item-card:nth-child(3)  { animation-delay: 0.15s; }
+    .item-card:nth-child(4)  { animation-delay: 0.20s; }
+    .item-card:nth-child(5)  { animation-delay: 0.25s; }
+    .item-card:nth-child(6)  { animation-delay: 0.30s; }
+    .item-card:nth-child(7)  { animation-delay: 0.35s; }
+    .item-card:nth-child(8)  { animation-delay: 0.40s; }
+    .item-card:nth-child(9)  { animation-delay: 0.45s; }
+    .item-card:nth-child(10) { animation-delay: 0.50s; }
+  </style>
+</head>
+<body>
+  <header>
+    <div class="logo">
+      <span class="logo-text">Cyber<span>Shop</span></span>
+      <span class="logo-tag">// store</span>
+    </div>
+    <nav>
+      <a href="/shop" class="active">Магазин</a>
+      <a href="/profile">Профіль</a>
+      <a href="/login">Вихід</a>
+    </nav>
+  </header>
+
+  <main>
+    <div class="page-header">
+      <span class="page-tag">// available_items</span>
+      <h1 class="page-title">Каталог <span>товарів</span></h1>
+      <p class="page-subtitle">10 позицій · оновлено щойно</p>
+    </div>
+    <div class="grid" id="grid"></div>
+  </main>
+
+  <script>
+    const USER_ITEMS = new Set({{ user_items | tojson }});
+
+    const ITEMS = [
+      { name: "Aula F75",  price: "₴2 199", img: "https://content2.rozetka.com.ua/goods/images/big/458242816.jpg" },
+      { name: "Kingstone 2TB Flash Drive",      price: "₴1 999", img: "https://cdn.comfy.ua/media/catalog/product/3/7/3737268-1.jpg" },
+      { name: "CyberDeck v3 rasbery pi 6",    price: "₴6 000", img: "https://www.yankodesign.com/images/design_news/2024/08/diy-modular-cyberdeck-could-be-the-futuristic-computer-you-can-get-soon/pilet-diy-cyberdeck-3.jpg" },
+      { name: "Plasma Mouse G9",     price: "₴899",   img: "https://picsum.photos/seed/cyber4/400/400" },
+      { name: "Neon Wristband V2",   price: "₴599",   img: "https://picsum.photos/seed/cyber5/400/400" },
+      { name: "DataCore SSD 2TB",    price: "₴3 799", img: "https://picsum.photos/seed/cyber6/400/400" },
+      { name: "Signal Hub 8-port",   price: "₴749",   img: "https://picsum.photos/seed/cyber7/400/400" },
+      { name: "Volt Charger 140W",   price: "₴1 099", img: "https://picsum.photos/seed/cyber8/400/400" },
+      { name: "Ghost Cam 4K",        price: "₴5 299", img: "https://picsum.photos/seed/cyber9/400/400" },
+      { name: "Echo Speaker Nano",   price: "₴679",   img: "https://picsum.photos/seed/cyber10/400/400" },
+    ];
+
+    function shuffle(arr) {
+      const a = [...arr];
+      for (let i = a.length - 1; i > 0; i--) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [a[i], a[j]] = [a[j], a[i]];
+      }
+      return a;
+    }
+
+    async function addToCart(btn, itemName) {
+      btn.disabled = true;
+      btn.textContent = '...';
+
+      try {
+        const formData = new FormData();
+        formData.append('item', itemName);
+
+        const res = await fetch('/shop', {
+          method: 'POST',
+          body: formData
+        });
+
+        if (res.ok) {
+          btn.textContent = '✓ додано';
+          btn.classList.add('added');
+          USER_ITEMS.add(itemName);
+        } else {
+          btn.textContent = '+ кошик';
+          btn.disabled = false;
+        }
+      } catch (e) {
+        btn.textContent = '+ кошик';
+        btn.disabled = false;
+      }
+    }
+
+    function render() {
+      const grid = document.getElementById('grid');
+      const shuffled = shuffle(ITEMS);
+
+      shuffled.forEach((item, i) => {
+        const card = document.createElement('div');
+        card.className = 'item-card';
+
+        const wrap = document.createElement('div');
+        wrap.className = 'item-img-wrap';
+
+        const img = document.createElement('img');
+        img.src = item.img;
+        img.alt = item.name;
+        img.loading = 'lazy';
+        img.onload = () => wrap.classList.add('loaded');
+        wrap.appendChild(img);
+
+        const isAdded = USER_ITEMS.has(item.name);
+
+        const info = document.createElement('div');
+        info.className = 'item-info';
+        info.innerHTML = `
+          <span class="item-index">// ${String(i + 1).padStart(2, '0')}</span>
+          <div class="item-name">${item.name}</div>
+          <div class="item-bottom">
+            <div class="item-price">${item.price}</div>
+          </div>
+        `;
+
+        const btn = document.createElement('button');
+        btn.className = 'btn-cart' + (isAdded ? ' added' : '');
+        btn.textContent = isAdded ? '✓ додано' : '+ кошик';
+        btn.disabled = isAdded;
+        if (!isAdded) {
+          btn.addEventListener('click', () => addToCart(btn, item.name));
+        }
+
+        info.querySelector('.item-bottom').appendChild(btn);
+        card.appendChild(wrap);
+        card.appendChild(info);
+        grid.appendChild(card);
+      });
+    }
+
+    render();
+  </script>
+</body>
+</html>

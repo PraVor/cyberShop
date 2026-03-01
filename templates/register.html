@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="uk">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Реєстрація</title>
+  <link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;800&family=Syne+Mono&display=swap" rel="stylesheet"/>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    :root {
+      --bg: #0a0a0f; --surface: #111118; --border: #2a2a3a;
+      --accent: #e8ff47; --accent2: #7c4dff; --text: #f0f0f0; --muted: #666680;
+    }
+    body {
+      min-height: 100vh; background: var(--bg); font-family: 'Syne', sans-serif;
+      color: var(--text); display: flex; align-items: center; justify-content: center; overflow: hidden;
+    }
+    body::before {
+      content: ''; position: fixed; inset: 0;
+      background-image: linear-gradient(var(--border) 1px, transparent 1px), linear-gradient(90deg, var(--border) 1px, transparent 1px);
+      background-size: 60px 60px; opacity: 0.4; pointer-events: none;
+    }
+    body::after {
+      content: ''; position: fixed; width: 600px; height: 600px; border-radius: 50%;
+      background: radial-gradient(circle, rgba(124,77,255,0.15) 0%, transparent 70%);
+      top: 50%; left: 50%; transform: translate(-50%, -50%); pointer-events: none;
+    }
+    .wrapper { position: relative; z-index: 1; width: 100%; max-width: 480px; padding: 20px; animation: fadeUp 0.6s ease both; }
+    @keyframes fadeUp { from { opacity: 0; transform: translateY(30px); } to { opacity: 1; transform: translateY(0); } }
+    .card {
+      background: var(--surface); border: 1px solid var(--border); border-radius: 2px;
+      padding: 48px 40px 40px; position: relative; box-shadow: 0 0 60px rgba(124,77,255,0.08);
+    }
+    .card::before { content: ''; position: absolute; top: -1px; left: -1px; width: 60px; height: 60px; border-top: 2px solid var(--accent); border-left: 2px solid var(--accent); }
+    .card::after  { content: ''; position: absolute; bottom: -1px; right: -1px; width: 60px; height: 60px; border-bottom: 2px solid var(--accent); border-right: 2px solid var(--accent); }
+    .header { margin-bottom: 36px; }
+    .tag { font-family: 'Syne Mono', monospace; font-size: 11px; letter-spacing: 0.2em; text-transform: uppercase; color: var(--accent); margin-bottom: 10px; display: block; }
+    h1 { font-size: 34px; font-weight: 800; line-height: 1; letter-spacing: -0.02em; }
+    h1 span { color: var(--accent); }
+    .field { margin-bottom: 20px; }
+    label { display: block; font-size: 11px; font-weight: 600; letter-spacing: 0.15em; text-transform: uppercase; color: var(--muted); margin-bottom: 8px; }
+    input {
+      width: 100%; background: rgba(255,255,255,0.03); border: 1px solid var(--border); border-radius: 2px;
+      color: var(--text); font-family: 'Syne', sans-serif; font-size: 15px; padding: 12px 16px; outline: none;
+      transition: border-color 0.2s, box-shadow 0.2s, background 0.2s;
+    }
+    input:focus { border-color: var(--accent2); background: rgba(124,77,255,0.05); box-shadow: 0 0 0 3px rgba(124,77,255,0.15); }
+    input::placeholder { color: var(--muted); font-size: 14px; }
+    .btn {
+      width: 100%; margin-top: 8px; padding: 14px 24px; background: var(--accent); color: #0a0a0f;
+      font-family: 'Syne', sans-serif; font-size: 14px; font-weight: 800; letter-spacing: 0.12em;
+      text-transform: uppercase; border: none; border-radius: 2px; cursor: pointer;
+      position: relative; overflow: hidden; transition: transform 0.15s, box-shadow 0.15s;
+    }
+    .btn::before { content: ''; position: absolute; inset: 0; background: rgba(0,0,0,0); transition: background 0.2s; }
+    .btn:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(232,255,71,0.3); }
+    .btn:hover::before { background: rgba(0,0,0,0.08); }
+    .btn:active { transform: translateY(0); }
+    .footer { margin-top: 24px; text-align: center; font-size: 13px; color: var(--muted); }
+    .footer a { color: var(--text); text-decoration: none; border-bottom: 1px solid var(--border); transition: color 0.2s, border-color 0.2s; }
+    .footer a:hover { color: var(--accent); border-color: var(--accent); }
+    .field:nth-child(1) { animation: fadeUp 0.5s 0.1s ease both; }
+    .field:nth-child(2) { animation: fadeUp 0.5s 0.2s ease both; }
+    .field:nth-child(3) { animation: fadeUp 0.5s 0.3s ease both; }
+    .btn { animation: fadeUp 0.5s 0.4s ease both; }
+  </style>
+</head>
+<body>
+  <div class="wrapper">
+    <div class="card">
+      <div class="header">
+        <span class="tag">// new_user</span>
+        <h1>Реєст<span>рація</span></h1>
+      </div>
+      <form method="POST" action="/register">
+        <input type="hidden" name="items" value="" />
+        <div class="field">
+          <label for="username">Ім'я користувача</label>
+          <input type="text" id="username" name="username" placeholder="your_username" required autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="email">Електронна пошта</label>
+          <input type="email" id="email" name="email" placeholder="you@example.com" required autocomplete="off" />
+        </div>
+        <div class="field">
+          <label for="password">Пароль</label>
+          <input type="password" id="password" name="password" placeholder="••••••••" required />
+        </div>
+        <button type="submit" class="btn">Зареєструватись →</button>
+      </form>
+      <div class="footer">
+        Вже є акаунт? <a href="/login">Увійти</a>
+      </div>
+    </div>
+  </div>
+</body>
+</html>
