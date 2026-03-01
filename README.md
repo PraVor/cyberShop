@@ -1,1 +1,2 @@
 # cyberShop
+Project for hosting
